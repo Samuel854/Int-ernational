@@ -158,6 +158,7 @@ public class ChatToolInterface implements Initializable {
         outputTextArea.appendText("Connection has been closed."+System.lineSeparator()+
                 "Server is ready."+System.lineSeparator());
         btnDisconnect.setDisable(true);
+        btnConnect.setDisable(false);
         System.out.println("Connection was closed with disconnect button");
 
     }
