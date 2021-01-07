@@ -104,6 +104,7 @@ public class ChatToolInterface implements Initializable {
         });
         readMessage.start();
         btnDisconnect.setDisable(false);
+        btnConnect.setDisable(true);
     }
 
     // gets called when clicking on button "send"
