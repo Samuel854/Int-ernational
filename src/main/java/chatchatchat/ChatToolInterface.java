@@ -103,6 +103,7 @@ public class ChatToolInterface implements Initializable {
             }
         });
         readMessage.start();
+        //disable felds and buttons after connected to the server
         btnDisconnect.setDisable(false);
         btnConnect.setDisable(true);
         fieldToTypeUsername.setDisable(true);
