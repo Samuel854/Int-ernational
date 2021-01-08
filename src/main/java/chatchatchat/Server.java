@@ -73,6 +73,7 @@ protected String username;
     @Override
     public void run() {
         try {
+
             handlers.addElement(this);
             while (true) {
                 String msg = i.readUTF();

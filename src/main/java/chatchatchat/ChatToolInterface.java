@@ -105,6 +105,9 @@ public class ChatToolInterface implements Initializable {
         readMessage.start();
         btnDisconnect.setDisable(false);
         btnConnect.setDisable(true);
+        fieldToTypeUsername.setDisable(true);
+        fieldToTypeHostName.setDisable(true);
+        fieldToTypePortNumber.setDisable(true);
     }
 
     // gets called when clicking on button "send"
@@ -156,9 +159,12 @@ public class ChatToolInterface implements Initializable {
         ChatClient.o.close();
 
         outputTextArea.appendText("Connection has been closed."+System.lineSeparator()+
-                "Server is ready."+System.lineSeparator());
+                "Server is ready."+System.lineSeparator()+"Please log in or start a new server."+System.lineSeparator());
         btnDisconnect.setDisable(true);
         btnConnect.setDisable(false);
+        fieldToTypeUsername.setDisable(false);
+        fieldToTypeHostName.setDisable(false);
+        fieldToTypePortNumber.setDisable(false);
         System.out.println("Connection was closed with disconnect button");
 
     }

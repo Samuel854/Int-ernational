@@ -74,6 +74,7 @@ public class ChatClient extends Application {
         primaryStage.show();
         primaryStage.isResizable();
 
+
         //to stop the app if the window is closed
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
