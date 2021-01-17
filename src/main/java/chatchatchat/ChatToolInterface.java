@@ -14,7 +14,8 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 public class ChatToolInterface implements Initializable {
-
+//outputTextArea is not optimal - cannot scroll if too many messages
+    //make all the fields and buttons resizeble
 
     public Button btnSendMsg;
     public Button btnConnect;
@@ -41,6 +42,13 @@ public class ChatToolInterface implements Initializable {
                 +System.lineSeparator()+"Afterwards, you can chat.");
         inputTextField.setText("Please type your message here after connecting to the server.");
         btnDisconnect.setDisable(true);
+        btnSendMsg.setDisable(true); //set disable at the beginning of the program
+        outputTextArea.isResizable();
+        inputTextField.isResizable();
+        btnStartServer.isResizable();
+        btnSendMsg.setDefaultButton(true); //activate send button by pushing enter enter button on the keyboard
+
+
 
     }
     // gets called when "start server" is clicked
@@ -103,7 +111,8 @@ public class ChatToolInterface implements Initializable {
             }
         });
         readMessage.start();
-        //disable felds and buttons after connected to the server
+        //disable or enable fields and buttons after connected to the server
+        btnSendMsg.setDisable(false);
         btnDisconnect.setDisable(false);
         btnConnect.setDisable(true);
         fieldToTypeUsername.setDisable(true);
@@ -163,9 +172,11 @@ public class ChatToolInterface implements Initializable {
                 "Server is ready."+System.lineSeparator()+"Please log in or start a new server."+System.lineSeparator());
         btnDisconnect.setDisable(true);
         btnConnect.setDisable(false);
+        btnSendMsg.setDisable(true);
         fieldToTypeUsername.setDisable(false);
         fieldToTypeHostName.setDisable(false);
         fieldToTypePortNumber.setDisable(false);
+        btnStartServer.setDisable(false);
         System.out.println("Connection was closed with disconnect button");
 
     }
