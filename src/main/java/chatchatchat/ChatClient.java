@@ -72,7 +72,7 @@ public class ChatClient extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Chat Tool");
         primaryStage.show();
-        primaryStage.isResizable();
+        primaryStage.setResizable(false);
 
 
         //to stop the app if the window is closed

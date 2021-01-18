@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Enumeration;
@@ -13,10 +14,15 @@ import java.util.Vector;
 
 public class Server {
 
+
     public static void startServer(String portNumber) throws IOException {
         ServerSocket ss;
         int x = Integer.parseInt(portNumber);
+
+        //if (isServerAlreadyStarted(x))
         ss = new ServerSocket(x); // new serverSocket with portNumber from textField
+
+        System.out.println(Inet4Address.getLocalHost().getHostAddress());
         System.out.println("Server Socket created.");
 
         // threads in order to handle client requests

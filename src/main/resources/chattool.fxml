@@ -6,19 +6,19 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chatchatchat.ChatToolInterface">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #403532#403532;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chatchatchat.ChatToolInterface">
    <children>
       <TextField fx:id="inputTextField" layoutX="55.0" layoutY="230.0" prefHeight="26.0" prefWidth="513.0" />
-      <TextArea fx:id="outputTextArea" editable="false" layoutX="54.0" layoutY="41.0" mouseTransparent="true" prefHeight="170.0" prefWidth="514.0" />
-      <Label layoutX="38.0" layoutY="318.0" text="Host or IP" />
-      <Label layoutX="39.0" layoutY="355.0" text="Port number" />
-      <TextField fx:id="fieldToTypeHostName" layoutX="115.0" layoutY="314.0" prefHeight="17.0" prefWidth="127.0" />
+      <Label layoutX="22.0" layoutY="314.0" text="Host or IP :" textFill="WHITE" />
+      <Label layoutX="22.0" layoutY="355.0" text="Port number :" textFill="WHITE" />
+      <TextField fx:id="fieldToTypeHostName" layoutX="115.0" layoutY="310.0" prefHeight="27.0" prefWidth="127.0" />
       <TextField fx:id="fieldToTypePortNumber" layoutX="115.0" layoutY="351.0" prefHeight="25.0" prefWidth="127.0" />
       <Button fx:id="btnSendMsg" layoutX="423.0" layoutY="296.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="127.0" text="Send" />
-      <Button fx:id="btnConnect" layoutX="275.0" layoutY="332.0" mnemonicParsing="false" onAction="#connectAcceptRequest" prefHeight="25.0" prefWidth="119.0" text="Connect" />
+      <Button fx:id="btnConnect" layoutX="275.0" layoutY="332.0" mnemonicParsing="false" onAction="#connectAcceptRequest" prefHeight="25.0" prefWidth="119.0" style="-fx-focus-color: #82f166 #82f166;" text="Connect" />
       <Button fx:id="btnStartServer" layoutX="275.0" layoutY="295.0" mnemonicParsing="false" onAction="#startingServer" prefHeight="26.0" prefWidth="119.0" text="StartServer" />
-      <Button fx:id="btnDisconnect" layoutX="423.0" layoutY="332.0" mnemonicParsing="false" onAction="#disconnectTheSocket" prefHeight="26.0" prefWidth="127.0" text="Disconnect" />
-      <TextField fx:id="fieldToTypeUsername" layoutX="115.0" layoutY="271.0" prefHeight="25.0" prefWidth="127.0" />
-      <Label layoutX="38.0" layoutY="275.0" text="Username" />
+      <Button fx:id="btnDisconnect" layoutX="423.0" layoutY="332.0" mnemonicParsing="false" onAction="#disconnectTheSocket" prefHeight="26.0" prefWidth="127.0" style="-fx-focus-color: #f67664;" text="Disconnect" />
+      <TextField fx:id="fieldToTypeUsername" layoutX="115.0" layoutY="271.0" prefHeight="27.0" prefWidth="127.0" />
+      <Label layoutX="21.0" layoutY="275.0" text="Username :" textFill="WHITE" />
+      <TextArea fx:id="outputTextArea" editable="false" layoutX="55.0" layoutY="20.0" prefHeight="200.0" prefWidth="513.0" style="-fx-focus-color: transparent;" />
    </children>
 </AnchorPane>

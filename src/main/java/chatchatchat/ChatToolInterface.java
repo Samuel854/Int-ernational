@@ -9,13 +9,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 public class ChatToolInterface implements Initializable {
 //outputTextArea is not optimal - cannot scroll if too many messages
-    //make all the fields and buttons resizeble
+    //make all the fields and buttons resizeable
 
     public Button btnSendMsg;
     public Button btnConnect;
@@ -35,7 +37,12 @@ public class ChatToolInterface implements Initializable {
     // set default values for TextFields
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fieldToTypeHostName.setText("127.0.0.1");
+        /*fieldToTypeHostName.setText("127.0.0.1");*/
+        try {
+            fieldToTypeHostName.setText(Inet4Address.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         fieldToTypePortNumber.setText("1234");
         outputTextArea.setText("Firstly, type the hostname and the port number."+System.lineSeparator()+
                 "Secondly, click on StartServer."+System.lineSeparator()+"Thirdly, click on Connect."
@@ -44,7 +51,9 @@ public class ChatToolInterface implements Initializable {
         btnDisconnect.setDisable(true);
         btnSendMsg.setDisable(true); //set disable at the beginning of the program
         outputTextArea.isResizable();
+        outputTextArea.setEditable(false);
         inputTextField.isResizable();
+        inputTextField.setDisable(true);
         btnStartServer.isResizable();
         btnSendMsg.setDefaultButton(true); //activate send button by pushing enter enter button on the keyboard
 
@@ -97,7 +106,7 @@ public class ChatToolInterface implements Initializable {
                         StringTokenizer st = new StringTokenizer(msg,"#"); // split message in userName and message
                         String sender = st.nextToken(); // get first part = userName
                         String msgToSend = st.nextToken(); // get second part = message
-                        System.out.println("Messege that was read: "+msg);
+                        System.out.println("Message that was read: "+msg);
                         showMessage(sender+": "+msgToSend);
                         System.out.println("After invoking showMessage Method");
                     } catch (IOException exception) {
@@ -115,6 +124,7 @@ public class ChatToolInterface implements Initializable {
         btnSendMsg.setDisable(false);
         btnDisconnect.setDisable(false);
         btnConnect.setDisable(true);
+        inputTextField.setDisable(false);
         fieldToTypeUsername.setDisable(true);
         fieldToTypeHostName.setDisable(true);
         fieldToTypePortNumber.setDisable(true);
