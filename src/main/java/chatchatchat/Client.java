@@ -5,13 +5,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.StringTokenizer;
 
-//the class should have no subclasses
+
+//the class should have no subclasses - not really necessary to implement this feature
+//each time the user connects to the server, an object is created
 public final class Client {
 
-    private static Thread readMessage;
     private final String username;
     private final String portNumber;
     private final String ipAddress;
@@ -26,15 +25,17 @@ public final class Client {
         this.ipAddress = ipAddress;
 
         InetAddress ip = InetAddress.getByName(ipAddress);
-        int x = Integer.parseInt(portNumber);
-        this.socket = new Socket(ip,x);   // create new socket
+        this.socket = new Socket(ip, Integer.parseInt(portNumber));   // create new socket
+
+        //create input and out streams
         this.dataInputStream = new DataInputStream(socket.getInputStream());
         this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
         System.out.println("User connected to Server");
+
     }
 
-    //to get the name of the user
+    //getters are not used in our application - can be used when extending the app
     public String getUsername() {
         return username;
     }
@@ -45,26 +46,9 @@ public final class Client {
         return portNumber;
     }
 
-    /*
-    //calls this method if click Connect to connect the client to the server
-    public void connectToServer() throws IOException {
-        InetAddress ip = InetAddress.getByName(ipAddress);
-        int x = Integer.parseInt(portNumber);
-        socket = new Socket(ip,x);   // create new socket
-        dataInputStream = new DataInputStream(socket.getInputStream());
-        dataOutputStream = new DataOutputStream(socket.getOutputStream());
-
-        System.out.println("User connected to Server");
-    }
-
-     */
-
-
-    // read from inputStream and return (gets called in read Thread)
-    //is a static method
+    // read from inputStream and return String (gets called in read Thread)
     public String receiveMsg() throws IOException {
         return dataInputStream.readUTF();
-
     }
 
     //send Message to socket
@@ -79,7 +63,6 @@ public final class Client {
             socket.close();
             dataInputStream.close();
             dataOutputStream.close();
-            //delete the object from the list
         } catch (IOException exception) {
             exception.printStackTrace();
         }
