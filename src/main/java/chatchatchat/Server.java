@@ -1,8 +1,5 @@
 package chatchatchat;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,29 +10,49 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 public class Server {
+    public ServerSocket serverSocket;
+    private final String portNumber;
 
+    public Server(String portNumber) throws IOException {
+        this.portNumber = portNumber;
+        /*
+        int portNumberServer = Integer.parseInt(portNumber);
+        this.serverSocket=new ServerSocket(portNumberServer);
+        System.out.println(Inet4Address.getLocalHost().getHostAddress());
+        System.out.println("Server Socket created.");
 
-    public static void startServer(String portNumber) throws IOException {
-        ServerSocket ss;
-        int x = Integer.parseInt(portNumber);
+         */
+    }
+    public String getPortNumber() {
+        return this.portNumber;
+    }
+    public void startServer() throws IOException {
+        /* ServerSocket serverSocket;
 
-        //if (isServerAlreadyStarted(x))
-        ss = new ServerSocket(x); // new serverSocket with portNumber from textField
+        */
+
+        //int portNumberServer = Integer.parseInt(portNumber);
+        //if (isServerAlreadyStarted(portNumberServer))
+
+        // new serverSocket with portNumber from textField
+        serverSocket = new ServerSocket(Integer.parseInt(portNumber));
 
         System.out.println(Inet4Address.getLocalHost().getHostAddress());
         System.out.println("Server Socket created.");
 
-        // threads in order to handle client requests
-        Thread ok = new Thread(new Runnable() {
+
+        // thread in order to handle client requests
+        Thread acceptClientRequests = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
-                    Socket s = null;
+                    Socket socket = null;
                     try {
-                        s = ss.accept(); // accept new incoming connections
-                        System.out.println("New client request received: " + s.getInetAddress());
+                        socket = serverSocket.accept(); // accept new incoming connections
+
+                        System.out.println("New client request received: " + socket.getInetAddress());
                         //erstelle ClientHandler, der Nachrichten empfängt und an alle weiterleitet
-                        ClientHandler c = new ClientHandler(s);
+                        ClientHandler c = new ClientHandler(socket);
                         Thread t = new Thread(c);
                         t.start();
                     } catch (IOException e) {
@@ -44,32 +61,46 @@ public class Server {
                 }
             }
         });
-        ok.start();
+        acceptClientRequests.start();
     }
 
+
     // checks if the server is started by looking to the buttons (enabled = server not started)
-    public static boolean isServerAlreadyStarted(String portnumber) {
+    public boolean isServerAlreadyStarted() {
         try {
-            startServer(portnumber);
+            startServer();
             return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return true;
         }
     }
+
+
+    public boolean checkIfServerIsStillActive () {
+        if (serverSocket.isClosed()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
 }
+
+
 
 // needed in order to handle client requests
 class ClientHandler implements Runnable{
-protected Socket s;
-protected DataInputStream i;
-protected DataOutputStream o;
+protected Socket socket;
+protected DataInputStream dataInputStream;
+protected DataOutputStream dataOutputStream;
 protected String username;
 
-    public ClientHandler (Socket s) throws IOException {
-        this.s = s;
-        this.i = new DataInputStream(s.getInputStream());
-        this.o = new DataOutputStream(s.getOutputStream());
+    public ClientHandler (Socket socket) throws IOException {
+        this.socket = socket;
+        this.dataInputStream = new DataInputStream(socket.getInputStream());
+        this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
     }
 
     // in order to save client connections
@@ -82,15 +113,24 @@ protected String username;
 
             handlers.addElement(this);
             while (true) {
-                String msg = i.readUTF();
+                //try {
+                String msg = dataInputStream.readUTF();
                 broadcast(msg);
+
+                //} catch (IOException exception) {
+                //exception.printStackTrace();
+                //  handlers.removeElement(this);
+                //  }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception){
+            System.out.println("Cannot read any more, the connection should be closed.");
         } finally { //if there is an exception remove the client object from the list and close socket connection
             handlers.removeElement(this);
             try {
-                s.close();
+                socket.close();
+                dataInputStream.close();
+                dataOutputStream.close();
+                System.out.println("Connection was closed, removed from vector");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -104,10 +144,10 @@ protected String username;
             while (e.hasMoreElements()) { // if there are clients in the list -> send message
                 ClientHandler c = (ClientHandler) e.nextElement();
                 try {
-                    synchronized (c.o) {
-                        c.o.writeUTF(msg);
+                    synchronized (c.dataOutputStream) {
+                        c.dataOutputStream.writeUTF(msg);
                     }
-                    c.o.flush();
+                    c.dataOutputStream.flush();
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }

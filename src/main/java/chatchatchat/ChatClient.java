@@ -11,40 +11,44 @@ import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class ChatClient extends Application {
 
     private static Thread readMessage;
-    public static DataInputStream i;
-    public static DataOutputStream o;
-    public static Socket s;
+    public static DataInputStream dataInputStream;
+    public static DataOutputStream dataOutputStream;
+    public static Socket socket;
 
-
+    /*
     //calls this method if click Connect
     public static void connectToServer(String name, String portNumber) throws IOException { // method gets hostname and Port
         InetAddress ip = InetAddress.getByName(name);
         int x = Integer.parseInt(portNumber);
-        s = new Socket(ip,x);   // create new socket
-        i = new DataInputStream(s.getInputStream());
-        o = new DataOutputStream(s.getOutputStream());
+        socket = new Socket(ip,x);   // create new socket
+        dataInputStream = new DataInputStream(socket.getInputStream());
+        dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
         System.out.println("User connection to Server");
     }
 
+     */
+
+    /*
     // read from inputStream and return (gets called in read Thread)
-    public static String receiveMsg() throws IOException {
-        return i.readUTF();
+    public String receiveMsg() throws IOException {
+            return dataInputStream.readUTF();
     }
 
+     */
+
+    /*
     //send Message to socket
     public static void sendMsg(String msg) throws IOException {
-        o.writeUTF(msg); // write to outputStream
-        o.flush(); // empty output stream
+        dataOutputStream.writeUTF(msg); // write to outputStream
+        dataOutputStream.flush(); // empty output stream
     }
-
+     */
 
 
 

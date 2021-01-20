@@ -19,6 +19,8 @@ public class ChatToolInterface implements Initializable {
 //outputTextArea is not optimal - cannot scroll if too many messages
     //make all the fields and buttons resizeable
 
+    public Server server;
+    public Client chatUser;
     public Button btnSendMsg;
     public Button btnConnect;
     public Button btnStartServer;
@@ -45,7 +47,8 @@ public class ChatToolInterface implements Initializable {
         }
         fieldToTypePortNumber.setText("1234");
         outputTextArea.setText("Firstly, type the hostname and the port number."+System.lineSeparator()+
-                "Secondly, click on StartServer."+System.lineSeparator()+"Thirdly, click on Connect."
+                "Secondly, click on StartServer."+System.lineSeparator()+"Thirdly, type your username and " +
+                "click on Connect."
                 +System.lineSeparator()+"Afterwards, you can chat.");
         inputTextField.setText("Please type your message here after connecting to the server.");
         btnDisconnect.setDisable(true);
@@ -65,7 +68,10 @@ public class ChatToolInterface implements Initializable {
         String username = fieldToTypeUsername.getText();
         String port = fieldToTypePortNumber.getText();
 
-        if (Server.isServerAlreadyStarted(port)) { // starts server if not allready started in Server.java
+        //create Object of class server
+        server = new Server(port);
+        // starts server if not already started in Server.java
+        if (server.isServerAlreadyStarted()) {
             outputTextArea.appendText(System.lineSeparator()+System.lineSeparator()+"SERVER IS ALREADY ON."
                     +System.lineSeparator()+ "Please click connect button to log in."
                     +System.lineSeparator());
@@ -80,6 +86,75 @@ public class ChatToolInterface implements Initializable {
     }
 
     public void connectAcceptRequest(ActionEvent actionEvent) throws IOException {
+        //checks whether the required fields are empty
+        if (fieldToTypeUsername.getText().equals("") || fieldToTypePortNumber.getText().equals("")
+                ||fieldToTypeHostName.getText().equals("")) {
+            outputTextArea.appendText(System.lineSeparator()+
+                    "Please fill in the required fields: username, ip address and port number."
+                    +System.lineSeparator());
+        } else {
+            //create client and connect to server at the same time
+            chatUser = new Client(fieldToTypeUsername.getText(), fieldToTypeHostName.getText(),
+                    fieldToTypePortNumber.getText());
+
+            //connect client to the server
+            //chatUser.connectToServer();
+
+            //clear the output and input text fields
+            outputTextArea.clear();
+            inputTextField.clear();
+
+            System.out.println("Started reading");
+            //readMessage thread - needed to read in parallel the whole time
+            // system outs used for test purposes only
+            Thread readMessage = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Entered run");
+                    // start the read thread
+                    while (true) {
+                        if (checkConnection()){
+                            break;
+                        }
+
+                        System.out.println("Entered while loop");
+                        String msg = "Test";
+                        try {
+                            System.out.println("Entered try");
+                            //Read the message sent to this client
+                            msg = chatUser.receiveMsg(); // read from input stream
+                            StringTokenizer st = new StringTokenizer(msg,"#"); // split message in userName and message
+                            String sender = st.nextToken(); // get first part = userName
+                            String msgToSend = st.nextToken(); // get second part = message
+                            System.out.println("Message that was read: "+msg);
+                            showMessage(sender+": "+msgToSend);
+                            System.out.println("After invoking showMessage Method");
+                        } catch (IOException exception) {
+                            //exception.printStackTrace(); //commented to avoid exception message
+                        }
+                        if (checkConnection()){
+                            break;
+                        }
+                    }
+
+                }
+            });
+            readMessage.start();
+
+            //disable or enable fields and buttons after connection to the server has been established
+            btnSendMsg.setDisable(false);
+            btnDisconnect.setDisable(false);
+            btnConnect.setDisable(true);
+            inputTextField.setDisable(false);
+            fieldToTypeUsername.setDisable(true);
+            fieldToTypeHostName.setDisable(true);
+            fieldToTypePortNumber.setDisable(true);
+        }
+
+
+
+        /*
+        String username = fieldToTypeUsername.getText();
         String name = fieldToTypeHostName.getText();
         String port = fieldToTypePortNumber.getText();
         ChatClient.connectToServer(name,port); // calls the method to connect the client to the server
@@ -120,32 +195,26 @@ public class ChatToolInterface implements Initializable {
             }
         });
         readMessage.start();
-        //disable or enable fields and buttons after connected to the server
-        btnSendMsg.setDisable(false);
-        btnDisconnect.setDisable(false);
-        btnConnect.setDisable(true);
-        inputTextField.setDisable(false);
-        fieldToTypeUsername.setDisable(true);
-        fieldToTypeHostName.setDisable(true);
-        fieldToTypePortNumber.setDisable(true);
+
+         */
+
     }
 
-    // gets called when clicking on button "send"
+    // gets called when clicking on button "send" or pushing the enter button on the keyboard
     public void sendMessage(ActionEvent actionEvent) throws IOException {
         // if no text typed in do nothing
         if (inputTextField.getText().equals("")) {
 
         } else { // add message to own chatTextBox and send message to server
             System.out.println(fieldToTypeUsername.getText()+"#"+inputTextField.getText());
-            ChatClient.sendMsg(fieldToTypeUsername.getText()+"#"+inputTextField.getText());
-
+            chatUser.sendMsg(fieldToTypeUsername.getText()+"#"+inputTextField.getText());
         }
         inputTextField.clear(); // empty textField after message was sent
     }
+
     public void showMessage(String incomingMsg) {
         System.out.println("Message delivered");
         outputTextArea.appendText(incomingMsg+System.lineSeparator()); // add incoming messages to TextArea
-
     }
 
     // checks if the connection is established by looking to the buttons (enabled = connection not established)
@@ -161,9 +230,9 @@ public class ChatToolInterface implements Initializable {
 
     // TO-DO in case of unhandled exception call this method (not implemented yet)
     public void stopConnectionIfFailure() throws IOException {
-        ChatClient.s.close();
-        ChatClient.i.close();
-        ChatClient.o.close();
+        ChatClient.socket.close();
+        ChatClient.dataInputStream.close();
+        ChatClient.dataOutputStream.close();
         System.out.println("The connection was forcefully stopped.");
         outputTextArea.appendText("Connection has been closed."+System.lineSeparator()+
                 "Server is ready."+System.lineSeparator());
@@ -174,9 +243,7 @@ public class ChatToolInterface implements Initializable {
 
     // called when button "disconnect" is clicked
     public void disconnectTheSocket(ActionEvent actionEvent) throws IOException {
-        ChatClient.s.close();
-        ChatClient.i.close();
-        ChatClient.o.close();
+        chatUser.stopConnection();
 
         outputTextArea.appendText("Connection has been closed."+System.lineSeparator()+
                 "Server is ready."+System.lineSeparator()+"Please log in or start a new server."+System.lineSeparator());
