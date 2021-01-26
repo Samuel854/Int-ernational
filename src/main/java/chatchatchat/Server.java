@@ -43,9 +43,9 @@ public class Server {
                         System.out.println("New client request received: " + socket.getInetAddress());
 
                         //create ClientHandler, which receives messages and sends them to all clients
-                        ClientHandler c = new ClientHandler(socket);
-                        Thread t = new Thread(c);
-                        t.start();
+                        ClientHandler clientHandlerObject = new ClientHandler(socket);
+                        Thread threadObject = new Thread(clientHandlerObject);
+                        threadObject.start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
